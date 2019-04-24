@@ -3,9 +3,10 @@ module Main where
 import           Program          (Expression (..), Id (..), Program (..),
                                    Statement (..))
 
-import           ControlFlowGraph (Graph (..), Node (..), controlFlowGraphFrom,
-                                   start)
+import           ControlFlowGraph (Graph (..), mkGraph, startNode)
 import           Data.Map.Strict  as Map
+import           Node             (Node (..), NodeId(..))
+import           NodeShape        (Shape (..))
 
 program :: Program
 program =
@@ -24,4 +25,4 @@ program =
 main :: IO ()
 main = do
   print program
-  print $ controlFlowGraphFrom program
+  print $ mkGraph (Node (NId 1) (NPrint (Number 1)))
