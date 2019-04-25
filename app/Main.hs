@@ -1,28 +1,25 @@
 module Main where
 
-import           Program          (Expression (..), Id (..), Program (..),
-                                   Statement (..))
-
-import           ControlFlowGraph (Graph (..), mkGraph, startNode)
-import           Data.Map.Strict  as Map
-import           Node             (Node (..), NodeId(..))
-import           NodeShape        (Shape (..))
+import           Program
+import           ToCFGraph (fromProgram)
 
 program :: Program
 program =
   Program
     (Composition
-       (Assign (Id "x") (Number 2))
-       (If
-          (Variable (Id "x"))
-          (Print (Number 7))
+       (Composition
+          (Assign (Id "a") (Number 10))
           (While
-             (Plus (Variable (Id "x")) (Number 1))
+             (Variable (Id "a"))
              (Composition
-                (Print (Variable (Id "x")))
-                (Assign (Id "x") (Minus (Variable (Id "x")) (Number 1)))))))
+                (Assign (Id "a") (Minus (Variable (Id "a")) (Number 1)))
+                (If
+                   (Minus (Variable (Id "a")) (Number 5))
+                   (Assign (Id "a") (Number 0))
+                   (Assign (Id "a") (Minus (Variable (Id "a")) (Number 1)))))))
+       (Print (Variable (Id "a"))))
 
 main :: IO ()
 main = do
-  print program
-  print $ mkGraph (Node (NId 1) (NPrint (Number 1)))
+  print $ fromProgram (Program (Print (Variable (Id "a"))))
+  print $ fromProgram program

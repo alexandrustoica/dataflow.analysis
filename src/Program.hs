@@ -5,6 +5,8 @@ module Program
   , Id(..)
   ) where
 
+import qualified Data.Map.Strict as Map
+
 newtype Program =
   Program Statement
   deriving (Eq)
