@@ -8,10 +8,11 @@ module CFGraph
   , add
   ) where
 
-import           CFNode          (Node (..))
 import qualified Data.Map.Strict as Map
 import           Prelude         hiding (pred)
-import           Program         (Expression (..), Id (..))
+import           AbstractSyntaxTree         (Expression (..), Id (..))
+
+newtype Node = Node Int deriving (Show, Eq, Ord)
 
 data Edge =
   Edge Node Node
