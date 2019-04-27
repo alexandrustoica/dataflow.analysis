@@ -46,5 +46,12 @@ nodes (While _ statement l) =
   Set.fromList [In f l | f <- Set.toList $ finals statement]
 nodes _ = Set.empty
 
+reverseNodes :: Set CFNode -> Set CFNode
+reverseNodes s = Set.fromList [go x | x <- Set.toList s]
+  where
+    go (In lhs rhs) = Out lhs rhs
+    go (Out lhs rhs) = In lhs rhs
+
+
 nodesFromProgram :: Program -> Set CFNode
 nodesFromProgram (Program s) = nodes s

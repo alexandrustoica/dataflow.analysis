@@ -21,4 +21,4 @@ program =
 
 main :: IO ()
 main = do
-  print $ nodesFromProgram program
+  print $ reverseNodes (nodesFromProgram program)
