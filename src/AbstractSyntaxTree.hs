@@ -4,6 +4,8 @@ module AbstractSyntaxTree
   , Expression(..)
   , Id(..)
   , Label(..)
+  , left
+  , right
   ) where
 
 import qualified Data.Map.Strict as Map
@@ -29,13 +31,26 @@ data Expression
   | Divide Expression Expression
   deriving (Eq)
 
+left :: Expression -> Expression
+left (Plus lhs rhs) = lhs
+left (Multiply lhs rhs) = lhs
+left (Minus lhs rhs) = lhs
+left (Divide lhs rhs) = lhs
+
+right :: Expression -> Expression
+right (Plus lhs rhs) = rhs
+right (Multiply lhs rhs) = rhs
+right (Minus lhs rhs) = rhs
+right (Divide lhs rhs) = rhs
+
+
 newtype Label =
   Label Int
   deriving (Show, Eq, Ord)
 
 newtype Id =
   Id String
-  deriving (Eq)
+  deriving (Eq, Ord)
 
 instance Show Program where
   show (Program program) = show program

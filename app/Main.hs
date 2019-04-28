@@ -2,6 +2,8 @@ module Main where
 
 import           AbstractSyntaxTree
 import           ControlFlowGraph
+import           Prelude            hiding (all)
+import           Variables
 
 program :: Program
 program =
@@ -21,4 +23,4 @@ program =
 
 main :: IO ()
 main = do
-  print $ reverseNodes (nodesFromProgram program)
+  print $ all program
