@@ -1,5 +1,7 @@
 module Variables
   ( all
+  , allFromStatement
+  , allFromExpression
   ) where
 
 import           AbstractSyntaxTree
