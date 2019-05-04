@@ -1,7 +1,7 @@
 module Main where
 
 import AbstractSyntaxTree
-import ControlFlowGraph
+import ControlFlowGraph hiding (finals)
 import DFAFramework
 import Data.Set as Set
 import Data.String
@@ -31,11 +31,12 @@ program =
 main :: IO ()
 main = do
   print $ (mkGraph program ! (Label 1))
-  print $ solve problem
+  print $ backward problem
   where
     problem = DFA {
       bottom = Set.empty,
       flow = nodesFromProgram program,
       graph = mkGraph program,
+      finals = Set.toList $ finalsFromProgram program,
       transferFunction = mkTransferFunction LiveVariables.kill LiveVariables.gen Set.empty
 }

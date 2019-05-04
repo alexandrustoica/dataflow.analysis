@@ -1,7 +1,8 @@
 module ControlFlowGraph
-  ( CFNode(..)
+  ( Edge(..)
   , CFGraph(..)
   , initial
+  , withStart
   , finals
   , initialFromProgram
   , finalsFromProgram
@@ -14,16 +15,18 @@ import AbstractSyntaxTree
 import Data.Set as Set
 import qualified Data.Map.Strict as Map
 
-data CFNode
-  = In Label Label
-  | Out Label Label
+data Edge
+  = Edge Label Label
   deriving (Eq, Ord)
 
-instance Show CFNode where
-  show (In a b) = show a ++ " -> " ++ show b
-  show (Out a b) = show a ++ " <- " ++ show b
+instance Show Edge where
+  show (Edge a b) = show a ++ " -> " ++ show b
 
 type CFGraph = Map.Map Label Statement
+
+withStart :: Label -> Set Edge -> [Edge]
+withStart l set = Set.toList $ Set.filter predicate set
+  where predicate (Edge lhs _) = lhs == l
 
 labelsFor :: Statement -> [(Label, Statement)]
 labelsFor s@(Print _ l) = [(l, s)]
@@ -63,23 +66,21 @@ initialFromProgram (Program s) = initial s
 finalsFromProgram :: Program -> Set Label
 finalsFromProgram (Program s) = finals s
 
-nodes :: Statement -> Set CFNode
+nodes :: Statement -> Set Edge
 nodes (Compose lhs rhs) =
   nodes lhs `union` nodes rhs `union`
-  Set.fromList [In x $ initial rhs | x <- Set.toList $ finals lhs]
+  Set.fromList [Edge x $ initial rhs | x <- Set.toList $ finals lhs]
 nodes (If _ lhs rhs l) =
   nodes lhs `union` nodes rhs `union`
-  Set.fromList [In l $ initial lhs, In l $ initial rhs]
+  Set.fromList [Edge l $ initial lhs, Edge l $ initial rhs]
 nodes (While _ statement l) =
-  nodes statement `union` Set.singleton (In l $ initial statement) `union`
-  Set.fromList [In f l | f <- Set.toList $ finals statement]
+  nodes statement `union` Set.singleton (Edge l $ initial statement) `union`
+  Set.fromList [Edge f l | f <- Set.toList $ finals statement]
 nodes _ = Set.empty
 
-reverseNodes :: Set CFNode -> Set CFNode
+reverseNodes :: Set Edge -> Set Edge
 reverseNodes s = Set.fromList [go x | x <- Set.toList s]
-  where
-    go (In lhs rhs) = Out lhs rhs
-    go (Out lhs rhs) = In lhs rhs
+  where go (Edge lhs rhs) = Edge rhs lhs
 
-nodesFromProgram :: Program -> Set CFNode
+nodesFromProgram :: Program -> Set Edge
 nodesFromProgram (Program s) = nodes s
