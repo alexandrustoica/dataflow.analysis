@@ -1,15 +1,13 @@
 module Main where
 
-import AbstractSyntaxTree
-import ControlFlowGraph hiding (finals)
-import DFAFramework
-import Data.Set as Set
-import Data.String
-import Prelude hiding (all)
-import Variables
-import Data.Map ((!))
-import TransferFunction
-import LiveVariables
+import           AbstractSyntaxTree
+import           ControlFlowGraph   hiding (finals)
+import           Data.Map           ((!))
+import           Data.Set           as Set
+import           Data.String
+import           LiveVariables
+import           Prelude            hiding (all)
+import           Variables
 
 program :: Program
 program =
@@ -27,16 +25,27 @@ program =
              (Label 2)))
        (Print (Var (Id "a")) (Label 6)))
 
+other :: Program
+other =
+  Program
+    (Compose
+       (Compose
+          (Assign (Id "a") (Number 0) (Label 1))
+          (While
+             (Minus (Var (Id "a")) (Number 5))
+             (Compose
+                (Assign (Id "b") (Plus (Var (Id "a")) (Number 1)) (Label 3))
+                (Compose
+                   (Assign
+                      (Id "c")
+                      (Plus (Var (Id "c")) (Var (Id "b")))
+                      (Label 4))
+                   (Assign
+                      (Id "a")
+                      (Multiply (Var (Id "b")) (Number 2))
+                      (Label 5))))
+             (Label 2)))
+       (Print (Var (Id ("c"))) (Label 6)))
 
 main :: IO ()
-main = do
-  print $ (mkGraph program ! (Label 1))
-  print $ backward problem
-  where
-    problem = DFA {
-      bottom = Set.empty,
-      flow = nodesFromProgram program,
-      graph = mkGraph program,
-      finals = Set.toList $ finalsFromProgram program,
-      transferFunction = mkTransferFunction LiveVariables.kill LiveVariables.gen Set.empty
-}
+main = print $ LiveVariables.analyse other

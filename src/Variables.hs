@@ -17,7 +17,7 @@ allFromExpression expr = go (left expr) (right expr)
 
 allFromStatement :: Statement -> Set Id
 allFromStatement (Print expr _) = allFromExpression expr
-allFromStatement (Assign id expr _) = allFromExpression expr
+allFromStatement (Assign id expr _) = Set.singleton id `union` allFromExpression expr
 allFromStatement (Compose lhs rhs) =
   allFromStatement lhs `union` allFromStatement rhs
 allFromStatement (If expr lhs rhs _) =

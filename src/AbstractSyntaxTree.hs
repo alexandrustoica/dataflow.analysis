@@ -32,21 +32,20 @@ data Expression
   deriving (Eq)
 
 left :: Expression -> Expression
-left (Plus lhs rhs) = lhs
+left (Plus lhs rhs)     = lhs
 left (Multiply lhs rhs) = lhs
-left (Minus lhs rhs) = lhs
-left (Divide lhs rhs) = lhs
+left (Minus lhs rhs)    = lhs
+left (Divide lhs rhs)   = lhs
 
 right :: Expression -> Expression
-right (Plus lhs rhs) = rhs
+right (Plus lhs rhs)     = rhs
 right (Multiply lhs rhs) = rhs
-right (Minus lhs rhs) = rhs
-right (Divide lhs rhs) = rhs
-
+right (Minus lhs rhs)    = rhs
+right (Divide lhs rhs)   = rhs
 
 newtype Label =
   Label Int
-  deriving (Show, Eq, Ord)
+  deriving (Ord)
 
 newtype Id =
   Id String
@@ -75,3 +74,9 @@ instance Show Expression where
       go' (Minus lhs rhs)    = show lhs ++ " - " ++ show rhs
       go' (Multiply lhs rhs) = show lhs ++ " * " ++ show rhs
       go' (Divide lhs rhs)   = show lhs ++ " \\ " ++ show rhs
+
+instance Eq Label where
+  (Label l') == (Label l) = l' == l
+
+instance Show Label where
+  show (Label id) = show id
