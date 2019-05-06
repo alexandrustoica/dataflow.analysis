@@ -48,4 +48,6 @@ other =
        (Print (Var (Id ("c"))) (Label 6)))
 
 main :: IO ()
-main = print $ LiveVariables.analyse other
+main = do
+  print other
+  print $ LiveVariables.analyse other

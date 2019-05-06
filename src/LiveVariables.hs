@@ -28,6 +28,5 @@ analyse program = backward problem
         , flow = reverse' $ edgesFrom program
         , graph = mkGraph program
         , finals = Set.toList $ finalsFromProgram program
-        , program = program
         , transferFunction = mkTransferFunction def use Set.empty
         }

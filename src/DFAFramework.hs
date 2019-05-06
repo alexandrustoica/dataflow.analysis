@@ -18,7 +18,6 @@ data DFA a =
     , flow             :: Set Edge
     , transferFunction :: Statement -> a -> a
     , graph            :: CFGraph
-    , program          :: Program
     }
 
 newtype Result a =
@@ -34,19 +33,22 @@ instance (Show a) => Show (Result a) where
 backward :: (Lattice a, Show a) => DFA a -> Result a
 backward givenData =
   let go [] acc = acc
-      go es@(Edge l l':xs) acc
-        | trace
-           (show l ++ " -- " ++ (show $ Map.findWithDefault default' l' acc))
-           False = undefined
+--      go es@(Edge l l':xs) acc
+--        | trace
+--           (show l ++ " -- " ++ show (Map.findWithDefault default' l' acc))
+--           False = undefined
       go (Edge l l':xs) acc =
         if not $ in'new `lessThan` in'old
-          then let workList' = ControlFlowGraph.withStart l' controlFlow ++ xs
-                   accumulator = Map.insert l' (in'new `union` in'old) acc
+          then let pred'l = ControlFlowGraph.withStart l' controlFlow
+                   workList' = pred'l ++ xs
+                   succ'l' = in'new `union` in'old
+                   accumulator = Map.insert l' succ'l' acc
                 in go workList' accumulator
           else go xs acc
         where
           target = controlFlowGraph ! l
-          in'new = function target (Map.findWithDefault default' l acc)
+          out = Map.findWithDefault default' l acc
+          in'new = function target out
           in'old = Map.findWithDefault default' l' acc
    in Result
         { result =
